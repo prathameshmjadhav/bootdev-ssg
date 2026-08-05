@@ -55,11 +55,11 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
 
     def test_leaf_to_html_p_with_props(self):
-        node = LeafNode("p", "Hello, world!", None, {"class": "primary"})
+        node = LeafNode("p", "Hello, world!", {"class": "primary"})
         self.assertEqual(node.to_html(), '<p class="primary">Hello, world!</p>')
 
     def test_leaf_to_html_a(self):
-        node = LeafNode("a", "Click Me", None, {"href": "https://www.google.com"})
+        node = LeafNode("a", "Click Me", {"href": "https://www.google.com"})
         self.assertEqual(
             node.to_html(), '<a href="https://www.google.com">Click Me</a>'
         )
