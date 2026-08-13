@@ -50,3 +50,107 @@ def extract_markdown_images(text: str) -> list[tuple[str, str]]:
 def extract_markdown_links(text: str) -> list[tuple[str, str]]:
     matches = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
     return matches
+
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
+
+    new_nodes:list[TextNode] = []
+
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+
+
+        images_list = extract_markdown_images(node.text)
+
+        if len(images_list) == 0:
+            new_nodes.append(node)
+            continue
+        
+
+        node_text = node.text
+
+        for image in images_list:
+            splits = node_text.split(f"![{image[0]}]({image[1]})",maxsplit=1)
+
+            if splits[0] == '':
+                new_nodes.append(TextNode(text=image[0], text_type=TextType.IMAGE, url=image[1]))
+                node_text = splits[len(splits) - 1]
+                continue
+
+            new_nodes.append(TextNode(text=splits[0], text_type=TextType.TEXT))
+            new_nodes.append(TextNode(text=image[0], text_type=TextType.IMAGE, url=image[1]))
+            
+            node_text = splits[len(splits) - 1]
+
+        if node_text != '':
+            new_nodes.append(TextNode(text=node_text, text_type=TextType.TEXT))
+            
+
+    return new_nodes
+
+
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+
+    new_nodes:list[TextNode] = []
+
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+
+        link_list = extract_markdown_links(node.text)
+
+        if len(link_list) == 0:
+            new_nodes.append(node)
+            continue
+        
+
+        node_text = node.text
+
+        for link in link_list:
+            splits = node_text.split(f"[{link[0]}]({link[1]})",maxsplit=1)
+
+            if splits[0] == '':
+                new_nodes.append(TextNode(text=link[0], text_type=TextType.LINK, url=link[1]))
+                node_text = splits[len(splits) - 1]
+                continue
+
+            new_nodes.append(TextNode(text=splits[0], text_type=TextType.TEXT))
+            new_nodes.append(TextNode(text=link[0], text_type=TextType.LINK, url=link[1]))
+            
+            node_text = splits[len(splits) - 1]
+
+        if node_text != '':
+            new_nodes.append(TextNode(text=node_text, text_type=TextType.TEXT))
+
+    return new_nodes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
