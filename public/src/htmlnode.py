@@ -68,4 +68,4 @@ class ParentNode(HTMLNode):
         for child in self.children:
             html_string += f"{child.to_html()}"
 
-        return f"<{self.tag}>{html_string}</{self.tag}>"
+        return f"<{self.tag}{self.props_to_html()}>{html_string}</{self.tag}>"
